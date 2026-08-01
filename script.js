@@ -1,4 +1,3 @@
-// 押されているキー一覧
 const activeKeys = new Set();
 
 function speak(text, pitch, callback = null) {
@@ -7,23 +6,18 @@ function speak(text, pitch, callback = null) {
   utter.pitch = pitch;
   utter.rate = 1.0;
   utter.onend = () => callback && callback();
-
-  // cancel() は使わない（他タイマーが止まるため）
   speechSynthesis.speak(utter);
 }
 
 class Timer {
-  constructor(id, startKey, stopKey, resetKey, pitch) {
+  constructor(id, startKey, pitch) {
     this.id = id;
     this.startKey = startKey.toLowerCase();
-    this.stopKey = stopKey.toLowerCase();
-    this.resetKey = resetKey.toLowerCase();
     this.pitch = pitch;
 
     this.timer = null;
     this.breakTimer = null;
     this.remaining = 0;
-    this.firstStart = true;
 
     this.buildUI();
     this.attachKeyboard();
@@ -65,7 +59,7 @@ class Timer {
 
     this.endless = document.createElement("input");
     this.endless.type = "checkbox";
-    this.endless.checked = true;   // 初期オン
+    this.endless.checked = true;
 
     const inputRow = document.createElement("div");
     inputRow.className = "input-row";
@@ -78,8 +72,9 @@ class Timer {
     const btnRow = document.createElement("div");
     btnRow.className = "buttons";
 
+    /* ★ スタートボタンに（Q）などの表示を追加 ★ */
     this.startBtn = document.createElement("button");
-    this.startBtn.textContent = "スタート";
+    this.startBtn.textContent = `スタート（${this.startKey.toUpperCase()}）`;
     this.startBtn.className = "start-btn";
     this.startBtn.onclick = () => this.startTimer();
 
@@ -133,19 +128,8 @@ class Timer {
     document.addEventListener("keydown", (e) => {
       activeKeys.add(e.key.toLowerCase());
 
-      // スタートキーが押されたら即スタート
       if (e.key.toLowerCase() === this.startKey) {
         this.startTimer();
-      }
-
-      // 停止キー
-      if (e.key.toLowerCase() === this.stopKey) {
-        this.stopTimer();
-      }
-
-      // リセットキー
-      if (e.key.toLowerCase() === this.resetKey) {
-        this.resetTimer();
       }
     });
 
@@ -172,7 +156,6 @@ class Timer {
     this.display.classList.remove("blue");
     this.message.textContent = "";
 
-    // 毎回「準備ができました」を言う
     speak(`${this.id}番スタートの準備ができました`, this.pitch, () => {
       const speakText =
         min > 0 && sec > 0
@@ -232,7 +215,6 @@ class Timer {
         this.display.textContent = this.format(min * 60 + sec);
 
         setTimeout(() => {
-          // 2回目以降も準備アナウンスを言う
           this.startTimer();
         }, 1000);
       }
@@ -257,9 +239,9 @@ class Timer {
   }
 }
 
-/* 5つのタイマー生成（声の高さも指定） */
-new Timer(1, "F1", "q", "a", 1.0);
-new Timer(2, "F2", "w", "s", 1.3);
-new Timer(3, "F3", "e", "d", 0.7);
-new Timer(4, "F4", "r", "f", 1.6);
-new Timer(5, "F5", "t", "g", 0.5);
+/* 5つのタイマー生成（スタートキーのみ） */
+new Timer(1, "q", 1.0);
+new Timer(2, "w", 1.3);
+new Timer(3, "e", 0.7);
+new Timer(4, "r", 1.6);
+new Timer(5, "t", 0.5);
