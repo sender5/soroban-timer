@@ -1,0 +1,123 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: sans-serif;
+
+  margin-top: 120px;   /* ← 全体をもっと下げる */
+}
+
+/* タイマー5つを中央に横並び */
+#timers-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;            /* ← 間隔を短くした（10px → 4px） */
+  margin-top: 40px;
+  margin-bottom: 80px;
+}
+
+/* タイマーを縦長にして画像と同じサイズ感にする */
+.timer-box {
+  border: 1px solid #aaa;
+  padding: 15px;
+  width: 260px;
+  text-align: center;
+  background: white;
+  position: relative;
+}
+
+.timer-title {
+  font-size: 20px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.display {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.message {
+  height: 26px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: black;
+}
+
+.blue {
+  color: blue;
+}
+
+/* 入力欄の右に「分」「秒」配置 */
+.input-row {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.input-row input {
+  width: 60px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.endless-row {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.buttons {
+  margin-top: 10px;
+}
+
+.buttons button {
+  margin: 3px;
+  width: 80px;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* スタート＝緑 */
+.start-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* ストップ＝赤 */
+.stop-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+/* リセット＝灰色 */
+.reset-btn {
+  background-color: #ddd;
+  color: black;
+}
+
+/* 非表示ボタン */
+.hide-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #ccc;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* 非表示タイマーはタイマー群よりさらに下に配置 */
+#hidden-container {
+  margin-top: 40px;     /* ← 非表示一覧をもっと下げる */
+  width: 90%;
+  text-align: center;
+}
+
+#hidden-list button {
+  margin: 5px;
+  padding: 6px;
+  font-size: 14px;
+}
