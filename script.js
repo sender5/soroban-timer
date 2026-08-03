@@ -264,7 +264,7 @@ class Timer {
     this.isRunning = false;
     this.wasStopped = false;
 
-    // ★ 時間は初期化しない（スマホのバグ対策）
+    // ★ 時間は絶対に初期化しない（スマホのバグ対策）
     // this.initialTime = this.initialTime;
     // this.remaining = this.initialTime;
 
@@ -274,8 +274,6 @@ class Timer {
     this.message.textContent = "待機中";
 
     // ★ 入力欄は触らない（スマホのバグ対策）
-    // minInput/secInput はそのまま残す
-
     this.startBtn.disabled = false;
   }
 }
