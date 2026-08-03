@@ -17,10 +17,12 @@ class Timer {
 
     this.timer = null;
     this.breakTimer = null;
-    this.remaining = 0;
+
+    this.remaining = 0;       // 現在の残り時間
+    this.initialTime = 0;     // 初回スタート時の時間
 
     this.isRunning = false;
-    this.wasStopped = false;   // ★ストップ後の再スタート判定
+    this.wasStopped = false;
 
     this.buildUI();
     this.attachKeyboard();
@@ -57,16 +59,19 @@ class Timer {
     this.secInput.type = "number";
     this.secInput.value = 0;
 
-    this.minInput.oninput = () => this.updateDisplayFromInput();
-    this.secInput.oninput = () => this.updateDisplayFromInput();
-
-    this.endless = document.createElement("input");
-    this.endless.type = "checkbox";
-    this.endless.checked = true;
+    /* ★ スマホでも確実に反映されるように3イベント追加 ★ */
+    ["oninput", "onchange", "onblur"].forEach(ev => {
+      this.minInput[ev] = () => this.updateDisplayFromInput();
+      this.secInput[ev] = () => this.updateDisplayFromInput();
+    });
 
     const inputRow = document.createElement("div");
     inputRow.className = "input-row";
     inputRow.append(this.minInput, " 分　", this.secInput, " 秒");
+
+    this.endless = document.createElement("input");
+    this.endless.type = "checkbox";
+    this.endless.checked = true;
 
     const endlessRow = document.createElement("div");
     endlessRow.className = "endless-row";
@@ -109,8 +114,11 @@ class Timer {
     const min = parseInt(this.minInput.value) || 0;
     const sec = parseInt(this.secInput.value) || 0;
     const total = min * 60 + sec;
-    this.display.textContent = this.format(total);
+
+    this.initialTime = total;
     this.remaining = total;
+
+    this.display.textContent = this.format(total);
   }
 
   hideTimer() {
@@ -129,7 +137,6 @@ class Timer {
   attachKeyboard() {
     document.addEventListener("keydown", (e) => {
       activeKeys.add(e.key.toLowerCase());
-
       if (e.key.toLowerCase() === this.startKey) {
         this.startTimer();
       }
@@ -151,25 +158,25 @@ class Timer {
     this.isRunning = true;
     this.startBtn.disabled = true;
 
-    /* ★ ストップ後の再スタートは remaining をそのまま使う ★ */
+    /* ★ ストップ後の再スタートは remaining を使う ★ */
     if (this.wasStopped) {
       this.wasStopped = false;
       this.runTimer();
       return;
     }
 
-    /* ★ 初回スタート時だけ入力欄から時間を読む ★ */
-    const min = parseInt(this.minInput.value);
-    const sec = parseInt(this.secInput.value);
-    this.remaining = min * 60 + sec;
+    /* ★ 初回スタート時だけ input を読む ★ */
+    this.remaining = this.initialTime;
 
     if (this.remaining <= 0) return;
 
     this.display.classList.remove("blue");
     this.message.textContent = "";
 
-    /* ★ 初回スタート時だけ準備音声を流す ★ */
     speak(`${this.id}番スタートの準備ができました`, this.pitch, () => {
+      const min = Math.floor(this.initialTime / 60);
+      const sec = this.initialTime % 60;
+
       const speakText =
         min > 0 && sec > 0
           ? `${min}分${sec}秒 用意はじめ`
@@ -220,12 +227,9 @@ class Timer {
         clearInterval(this.breakTimer);
         this.breakTimer = null;
 
-        const min = parseInt(this.minInput.value);
-        const sec = parseInt(this.secInput.value);
-
         this.message.textContent = "準備中";
         this.display.classList.remove("blue");
-        this.display.textContent = this.format(min * 60 + sec);
+        this.display.textContent = this.format(this.initialTime);
 
         setTimeout(() => {
           this.startTimer();
@@ -244,19 +248,37 @@ class Timer {
     this.isRunning = false;
     this.startBtn.disabled = false;
 
-    this.wasStopped = true;   // ★再スタート時は準備音声なし
+    this.wasStopped = true;
   }
 
   resetTimer() {
-    this.stopTimer();
+    // ★ すべての動作を強制停止
+    clearInterval(this.timer);
+    clearInterval(this.breakTimer);
+    speechSynthesis.cancel();   // ★ 音声も強制停止
+
+    this.timer = null;
+    this.breakTimer = null;
+
+    // ★ 状態を完全初期化
+    this.isRunning = false;
+    this.wasStopped = false;
+
+    // ★ 時間を初期化
     this.remaining = 0;
+    this.initialTime = 0;
+
+    // ★ UI を初期状態に戻す
     this.display.classList.remove("blue");
-    this.message.textContent = "待機中";
     this.display.textContent = "00:00";
+    this.message.textContent = "待機中";
+
+    // ★ 入力欄も初期化
     this.minInput.value = 0;
     this.secInput.value = 0;
 
-    this.wasStopped = false;  // ★完全リセット
+    // ★ ボタンを再び押せるように
+    this.startBtn.disabled = false;
   }
 }
 
