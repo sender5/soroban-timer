@@ -17,6 +17,7 @@ body {
 /* ★ PCでは横並び固定 ★ */
 #timers-container {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   gap: 10px;
   margin-top: 40px;
@@ -125,7 +126,7 @@ body {
   font-size: 14px;
 }
 
-/* ★ スマホでは縦並び固定 ★ */
+/* ★ スマホでは縦並び固定（600px以下）★ */
 @media (max-width: 600px) {
 
   #main-title {
@@ -133,13 +134,13 @@ body {
   }
 
   #timers-container {
-    flex-direction: column; /* ← スマホは縦並び */
+    flex-direction: column;   /* ← スマホは縦並び */
     align-items: center;
     gap: 20px;
   }
 
   .timer-box {
-    width: 95%; /* ← スマホは画面いっぱい */
+    width: 95%;               /* ← スマホは画面いっぱい */
   }
 
   .display {
