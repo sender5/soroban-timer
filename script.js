@@ -59,7 +59,6 @@ class Timer {
     this.secInput.type = "number";
     this.secInput.value = 0;
 
-    // ★ スマホでも確実に反映されるように3イベント追加
     ["oninput", "onchange", "onblur"].forEach(ev => {
       this.minInput[ev] = () => this.updateDisplayFromInput();
       this.secInput[ev] = () => this.updateDisplayFromInput();
@@ -158,14 +157,8 @@ class Timer {
     this.isRunning = true;
     this.startBtn.disabled = true;
 
-    // ★ ストップ後の再スタートは remaining を使う
-    if (this.wasStopped) {
-      this.wasStopped = false;
-      this.runTimer();
-      return;
-    }
+    this.wasStopped = false;
 
-    // ★ 初回スタート時だけ input を読む
     this.remaining = this.initialTime;
 
     if (this.remaining <= 0) return;
@@ -252,28 +245,26 @@ class Timer {
   }
 
   resetTimer() {
-    // ★ すべての動作を強制停止
+    // ★ 強制終了（音声も含む）
+    speechSynthesis.cancel();
+
     clearInterval(this.timer);
     clearInterval(this.breakTimer);
-    speechSynthesis.cancel();   // ★ 音声も強制停止
 
     this.timer = null;
     this.breakTimer = null;
 
-    // ★ 状態を完全初期化
     this.isRunning = false;
     this.wasStopped = false;
 
     // ★ 時間は絶対に初期化しない（スマホのバグ対策）
-    // this.initialTime = this.initialTime;
-    // this.remaining = this.initialTime;
+    // input の値はそのまま残す
 
     // ★ UI を初期状態に戻す
     this.display.classList.remove("blue");
     this.display.textContent = this.format(this.initialTime);
     this.message.textContent = "待機中";
 
-    // ★ 入力欄は触らない（スマホのバグ対策）
     this.startBtn.disabled = false;
   }
 }
