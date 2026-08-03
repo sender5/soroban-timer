@@ -19,7 +19,8 @@ class Timer {
     this.breakTimer = null;
     this.remaining = 0;
 
-    this.isRunning = false;   // ★ スタート連打防止
+    this.isRunning = false;
+    this.wasStopped = false;   // ★ストップ後の再スタート判定
 
     this.buildUI();
     this.attachKeyboard();
@@ -74,7 +75,6 @@ class Timer {
     const btnRow = document.createElement("div");
     btnRow.className = "buttons";
 
-    /* ★ スタートボタンに（Q）などの表示を追加 ★ */
     this.startBtn = document.createElement("button");
     this.startBtn.textContent = `スタート（${this.startKey.toUpperCase()}）`;
     this.startBtn.className = "start-btn";
@@ -147,21 +147,28 @@ class Timer {
   }
 
   startTimer() {
-    if (this.isRunning) return;   // ★ 連打防止
+    if (this.isRunning) return;
     this.isRunning = true;
     this.startBtn.disabled = true;
 
-    if (this.timer || this.breakTimer) return;
+    /* ★ ストップ後の再スタートは remaining をそのまま使う ★ */
+    if (this.wasStopped) {
+      this.wasStopped = false;
+      this.runTimer();
+      return;
+    }
 
+    /* ★ 初回スタート時だけ入力欄から時間を読む ★ */
     const min = parseInt(this.minInput.value);
     const sec = parseInt(this.secInput.value);
-
     this.remaining = min * 60 + sec;
+
     if (this.remaining <= 0) return;
 
     this.display.classList.remove("blue");
     this.message.textContent = "";
 
+    /* ★ 初回スタート時だけ準備音声を流す ★ */
     speak(`${this.id}番スタートの準備ができました`, this.pitch, () => {
       const speakText =
         min > 0 && sec > 0
@@ -230,11 +237,14 @@ class Timer {
   stopTimer() {
     clearInterval(this.timer);
     clearInterval(this.breakTimer);
+
     this.timer = null;
     this.breakTimer = null;
 
-    this.isRunning = false;          // ★ 再びスタート可能
+    this.isRunning = false;
     this.startBtn.disabled = false;
+
+    this.wasStopped = true;   // ★再スタート時は準備音声なし
   }
 
   resetTimer() {
@@ -246,12 +256,11 @@ class Timer {
     this.minInput.value = 0;
     this.secInput.value = 0;
 
-    this.isRunning = false;          // ★ 再びスタート可能
-    this.startBtn.disabled = false;
+    this.wasStopped = false;  // ★完全リセット
   }
 }
 
-/* 5つのタイマー生成（スタートキーのみ） */
+/* 5つのタイマー生成 */
 new Timer(1, "q", 1.0);
 new Timer(2, "w", 1.3);
 new Timer(3, "e", 0.7);
