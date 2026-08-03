@@ -19,6 +19,8 @@ class Timer {
     this.breakTimer = null;
     this.remaining = 0;
 
+    this.isRunning = false;   // ★ スタート連打防止
+
     this.buildUI();
     this.attachKeyboard();
   }
@@ -145,6 +147,10 @@ class Timer {
   }
 
   startTimer() {
+    if (this.isRunning) return;   // ★ 連打防止
+    this.isRunning = true;
+    this.startBtn.disabled = true;
+
     if (this.timer || this.breakTimer) return;
 
     const min = parseInt(this.minInput.value);
@@ -226,6 +232,9 @@ class Timer {
     clearInterval(this.breakTimer);
     this.timer = null;
     this.breakTimer = null;
+
+    this.isRunning = false;          // ★ 再びスタート可能
+    this.startBtn.disabled = false;
   }
 
   resetTimer() {
@@ -236,6 +245,9 @@ class Timer {
     this.display.textContent = "00:00";
     this.minInput.value = 0;
     this.secInput.value = 0;
+
+    this.isRunning = false;          // ★ 再びスタート可能
+    this.startBtn.disabled = false;
   }
 }
 
