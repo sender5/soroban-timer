@@ -18,8 +18,8 @@ class Timer {
     this.timer = null;
     this.breakTimer = null;
 
-    this.remaining = 0;       // 現在の残り時間
-    this.initialTime = 0;     // 初回スタート時の時間
+    this.remaining = 0;
+    this.initialTime = 0;
 
     this.isRunning = false;
     this.wasStopped = false;
@@ -59,7 +59,7 @@ class Timer {
     this.secInput.type = "number";
     this.secInput.value = 0;
 
-    /* ★ スマホでも確実に反映されるように3イベント追加 ★ */
+    // ★ スマホでも確実に反映されるように3イベント追加
     ["oninput", "onchange", "onblur"].forEach(ev => {
       this.minInput[ev] = () => this.updateDisplayFromInput();
       this.secInput[ev] = () => this.updateDisplayFromInput();
@@ -158,14 +158,14 @@ class Timer {
     this.isRunning = true;
     this.startBtn.disabled = true;
 
-    /* ★ ストップ後の再スタートは remaining を使う ★ */
+    // ★ ストップ後の再スタートは remaining を使う
     if (this.wasStopped) {
       this.wasStopped = false;
       this.runTimer();
       return;
     }
 
-    /* ★ 初回スタート時だけ input を読む ★ */
+    // ★ 初回スタート時だけ input を読む
     this.remaining = this.initialTime;
 
     if (this.remaining <= 0) return;
@@ -264,20 +264,18 @@ class Timer {
     this.isRunning = false;
     this.wasStopped = false;
 
-    // ★ 時間を初期化
-    this.remaining = 0;
-    this.initialTime = 0;
+    // ★ 時間は初期化しない（スマホのバグ対策）
+    // this.initialTime = this.initialTime;
+    // this.remaining = this.initialTime;
 
     // ★ UI を初期状態に戻す
     this.display.classList.remove("blue");
-    this.display.textContent = "00:00";
+    this.display.textContent = this.format(this.initialTime);
     this.message.textContent = "待機中";
 
-    // ★ 入力欄も初期化
-    this.minInput.value = 0;
-    this.secInput.value = 0;
+    // ★ 入力欄は触らない（スマホのバグ対策）
+    // minInput/secInput はそのまま残す
 
-    // ★ ボタンを再び押せるように
     this.startBtn.disabled = false;
   }
 }
