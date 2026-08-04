@@ -2,24 +2,36 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>そろばん教室タイマー</title>
 
-  <!-- ★ スマホ対応に必須。これが無いと絶対に効かない ★ -->
+  <title>そろばんタイマー｜読み上げ対応・暗算練習用タイマー</title>
+
+  <meta name="description" content="そろばん教室や暗算練習に使える読み上げ対応タイマー。複数タイマー、エンドレス機能、スマホ対応。そろばんの読み上げ練習に最適です。">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "そろばんタイマー",
+    "description": "そろばん教室や暗算練習に使える読み上げ対応タイマー。複数タイマー、エンドレス機能、スマホ対応。",
+    "applicationCategory": "EducationApplication",
+    "operatingSystem": "All",
+    "url": "https://あなたのGitHub名.github.io/あなたのリポジトリ名/"
+  }
+  </script>
+
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
-<h1 id="main-title">そろばん教室タイマー</h1>
+  <h1>そろばんタイマー</h1>
+ 
+  <div id="timers-container"></div>
 
-<div id="timers-container"></div>
-
-<div id="hidden-container">
-  <h3>非表示タイマー</h3>
   <div id="hidden-list"></div>
-</div>
 
-<script src="script.js?v=2"></script>
+  <script src="script.js?v=2"></script>
+
 </body>
 </html>
