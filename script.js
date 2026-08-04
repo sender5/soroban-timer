@@ -1,10 +1,21 @@
 const activeKeys = new Set();
 
+// ★ 日本語の自然な声を自動選択する関数
 function speak(text, pitch, callback = null) {
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "ja-JP";
   utter.pitch = pitch;
   utter.rate = 1.0;
+
+  // 日本語の自然な声を優先して選ぶ
+  const voices = speechSynthesis.getVoices();
+  const jpVoice =
+    voices.find(v => v.lang === "ja-JP" && v.name.includes("Natural")) ||
+    voices.find(v => v.lang === "ja-JP") ||
+    voices[0];
+
+  if (jpVoice) utter.voice = jpVoice;
+
   utter.onend = () => callback && callback();
   speechSynthesis.speak(utter);
 }
@@ -59,6 +70,7 @@ class Timer {
     this.secInput.type = "number";
     this.secInput.value = 0;
 
+    // ★ スマホでも確実に反映されるように3イベント追加
     ["oninput", "onchange", "onblur"].forEach(ev => {
       this.minInput[ev] = () => this.updateDisplayFromInput();
       this.secInput[ev] = () => this.updateDisplayFromInput();
@@ -157,7 +169,11 @@ class Timer {
     this.isRunning = true;
     this.startBtn.disabled = true;
 
-    this.wasStopped = false;
+    if (this.wasStopped) {
+      this.wasStopped = false;
+      this.runTimer();
+      return;
+    }
 
     this.remaining = this.initialTime;
 
@@ -195,8 +211,8 @@ class Timer {
         clearInterval(this.timer);
         this.timer = null;
 
-        speak("やめ", this.pitch);
-        this.message.textContent = "やめ";
+        speak(`${this.id}番やめ`, this.pitch);
+        this.message.textContent = `${this.id}番やめ`;
         this.display.textContent = "00:00";
 
         setTimeout(() => {
@@ -207,7 +223,7 @@ class Timer {
   }
 
   startBreak() {
-    let breakTime = 15;
+    let breakTime = 10; // ★ 巻き戻し10秒
 
     this.message.textContent = "巻き戻し中";
     this.display.classList.add("blue");
@@ -216,18 +232,34 @@ class Timer {
       breakTime--;
       this.display.textContent = this.format(breakTime);
 
-      if (breakTime <= 0) {
-        clearInterval(this.breakTimer);
-        this.breakTimer = null;
+   if (breakTime <= 0) {
+  clearInterval(this.breakTimer);
+  this.breakTimer = null;
 
-        this.message.textContent = "準備中";
-        this.display.classList.remove("blue");
-        this.display.textContent = this.format(this.initialTime);
+  // ★ 巻き戻し終了時だけ初期化（スマホでも安全）
+  const min = parseInt(this.minInput.value) || 0;
+  const sec = parseInt(this.secInput.value) || 0;
+  this.initialTime = min * 60 + sec;
+  this.remaining = this.initialTime;
 
-        setTimeout(() => {
-          this.startTimer();
-        }, 1000);
-      }
+  // ★ 初回スタート扱いに戻す（エンドレスの鍵）
+  this.wasStopped = false;
+
+  // ★ エンドレスが止まる本当の原因 → isRunning を false にする
+  this.isRunning = false;
+
+  this.message.textContent = "準備中";
+  this.display.classList.remove("blue");
+  this.display.textContent = this.format(this.initialTime);
+
+  setTimeout(() => {
+    this.startTimer();   // ★ 初回スタート扱いで再スタート
+  }, 1000);
+}
+
+
+
+
     }, 1000);
   }
 
@@ -257,10 +289,7 @@ class Timer {
     this.isRunning = false;
     this.wasStopped = false;
 
-    // ★ 時間は絶対に初期化しない（スマホのバグ対策）
-    // input の値はそのまま残す
-
-    // ★ UI を初期状態に戻す
+    // ★ input の値は触らない（スマホのバグ対策）
     this.display.classList.remove("blue");
     this.display.textContent = this.format(this.initialTime);
     this.message.textContent = "待機中";
