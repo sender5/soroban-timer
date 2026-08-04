@@ -3,36 +3,47 @@
 <head>
   <meta charset="UTF-8">
 
+  <!-- ★ Google検索で出やすくするためのタイトル -->
   <title>そろばんタイマー｜読み上げ対応・暗算練習用タイマー</title>
 
- <meta name="google-site-verification" content="nxiVrJRbYMS1GP6lhYWf4QzZctjNa7noDeAkff3bfKo" />
- 
- <meta name="description" content="そろばん教室や暗算練習に使える読み上げ対応タイマー。複数タイマー、エンドレス機能、スマホ対応。そろばんの読み上げ練習に最適です。">
+  <!-- ★ Google Search Console 所有権確認（あなた専用） -->
+  <meta name="google-site-verification" content="nxiVrJRbYMS1GP6lhYWf4QzZctjNa7noDeAkff3bfKo" />
 
+  <!-- ★ SEO用の説明文（検索結果に表示される） -->
+  <meta name="description" content="そろばん練習に特化した読み上げ対応タイマー。複数タイマー・エンドレス機能・スマホ対応で、教室でも自宅でも使いやすい設計です。">
+
+  <!-- ★ スマホ表示最適化（絶対に消しちゃダメ） -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- ★ Googleにページを理解させる構造化データ（SEO強化） -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "そろばんタイマー",
-    "description": "そろばん教室や暗算練習に使える読み上げ対応タイマー。複数タイマー、エンドレス機能、スマホ対応。",
+    "description": "そろばん練習に特化した読み上げ対応タイマー。複数タイマー・エンドレス機能・スマホ対応。",
     "applicationCategory": "EducationApplication",
     "operatingSystem": "All",
-    "url": "https://あなたのGitHub名.github.io/あなたのリポジトリ名/"
+    "url": "https://sender5.github.io/soroban-timer/"
   }
   </script>
 
+  <!-- ★ CSS 読み込み（キャッシュ対策で v=2） -->
   <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
-  <h1>そろばんタイマー</h1>
- 
+  <h1>そろばんタイマー（読み上げ対応）</h1>
+
+  <!-- 説明文は不要とのことなので削除済み -->
+
+  <!-- タイマー本体 -->
   <div id="timers-container"></div>
 
+  <!-- 非表示タイマーの復帰ボタン -->
   <div id="hidden-list"></div>
 
+  <!-- ★ JS 読み込み（キャッシュ対策で v=2） -->
   <script src="script.js?v=2"></script>
 
 </body>
